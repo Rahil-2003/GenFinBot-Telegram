@@ -566,7 +566,7 @@ def run_telegram():
 
 if __name__ == "__main__":
     from telegram.ext import ApplicationBuilder
-    telegram_app = ApplicationBuilder().token(os.getenv("BOT_TOKEN")).build()
+    telegram_app = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
 
     # Run both Flask and Telegram bot
     Thread(target=run_flask).start()
