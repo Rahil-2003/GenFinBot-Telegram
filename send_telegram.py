@@ -546,9 +546,13 @@ conv_handler = ConversationHandler(
     fallbacks=[]
 )
 
-app.add_handler(conv_handler)
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-app.add_handler(CommandHandler('reset', reset))
+def main():
+    app.add_handler(conv_handler)
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    app.add_handler(CommandHandler('reset', reset))
 
-print("🚀 GenFinBot Telegram is live...")
-app.run_polling()
+    print("🚀 GenFinBot Telegram is live...")
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
