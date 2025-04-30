@@ -13,7 +13,8 @@ from telegram import Update
 from telegram.ext import (
     ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters,ConversationHandler)
 from telegram import ReplyKeyboardMarkup, KeyboardButton
-
+from flask import Flask
+from threading import Thread
 
 # Load environment variables
 load_dotenv()
@@ -21,6 +22,8 @@ BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 MONGO_URL = os.getenv("MONGO_URL")
 T12_API_KEY = os.getenv("T12_API_KEY")
+
+app_flask = Flask(__name__)
 
 # Setup clients
 co = cohere.Client(COHERE_API_KEY)
@@ -546,13 +549,25 @@ conv_handler = ConversationHandler(
     fallbacks=[]
 )
 
-def main():
-    app.add_handler(conv_handler)
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    app.add_handler(CommandHandler('reset', reset))
+def home():
+    return "GenFinBot is alive!"
+
+def run_flask():
+    port = int(os.environ.get('PORT', 5000))
+    app_flask.run(host="0.0.0.0", port=port)
+
+def run_telegram():
+    telegram_app.add_handler(conv_handler)
+    telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    telegram_app.add_handler(CommandHandler('reset', reset))
 
     print("🚀 GenFinBot Telegram is live...")
-    app.run_polling()
+    telegram_app.run_polling()
 
 if __name__ == "__main__":
-    main()
+    from telegram.ext import ApplicationBuilder
+    telegram_app = ApplicationBuilder().token(os.getenv("BOT_TOKEN")).build()
+
+    # Run both Flask and Telegram bot
+    Thread(target=run_flask).start()
+    run_telegram()
