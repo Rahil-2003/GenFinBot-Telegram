@@ -1,1 +1,1 @@
-# GenFinBot-Telegram
+# GenFinBot
